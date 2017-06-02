@@ -6,14 +6,14 @@ using System;
 
 public class BingoController : MonoBehaviour
 {
-    static int bound = 5;
+    static int Bound = 7;
     static int Wins_Player = 0;
     static int Wins_Computer = 0;
     static int PlayerLine = 0;
     static int ComLine = 0;
     // 資料結構
-    BingoBoard m_PlayerBoard = new BingoBoard(bound);
-    AiBingoBoard.AiStrategy m_ComBoard = new AiBingoBoard.AiStrategy(bound);
+    BingoBoard m_PlayerBoard = new BingoBoard(Bound);
+    AiBingoBoard.AiStrategy m_ComBoard = new AiBingoBoard.AiStrategy(Bound);
     // 換誰出手
     enum WhichOne
     {
@@ -55,7 +55,7 @@ public class BingoController : MonoBehaviour
         // 換AI出手
         if (m_WhichOnePlay == WhichOne.Ai)
         {
-            int NextNumber = m_ComBoard.GetNextNumber(new AiBingoBoard.AiLevel2(bound));
+            int NextNumber = m_ComBoard.GetNextNumber(new AiBingoBoard.AiLevel2(Bound));//AI難度選擇
             ChangeButtonColor(NextNumber);
             m_ComBoard.SetNumber(NextNumber);
             m_PlayerBoard.SetNumber(NextNumber);
@@ -110,8 +110,8 @@ public class BingoController : MonoBehaviour
     // 顯示玩家的賓果盤
     void ShowPlayerBingoBoard()
     {
-        for (int i = 0; i < 5; ++i)
-            for (int j = 0; j < 5; ++j)
+        for (int i = 0; i < Bound; ++i)
+            for (int j = 0; j < Bound; ++j)
             {
                 Text theText = m_PlayerGrid[i, j].GetComponentInChildren<Text>();
                 theText.text = string.Format("{0}", m_PlayerBoard.m_Board[i, j]);
@@ -121,8 +121,8 @@ public class BingoController : MonoBehaviour
     // 顯示電腦的賓果盤
     void ShowComBingoBoard(bool bStartMode)
     {
-        for (int i = 0; i < 5; ++i)
-            for (int j = 0; j < 5; ++j)
+        for (int i = 0; i < Bound; ++i)
+            for (int j = 0; j < Bound; ++j)
             {
                 Text theText = m_ComGrid[i, j].GetComponentInChildren<Text>();
 
@@ -140,18 +140,19 @@ public class BingoController : MonoBehaviour
     // 產生電腦使用的Bingo盤
     void InitComGrid()
     {
-        m_ComGrid = new GameObject[5, 5];
+        m_ComGrid = new GameObject[Bound, Bound];
         GameObject Obj = GameObject.Find("ComBtn"); // 參考的按鈕
 
         // 取得按鈕的長寬 
         RectTransform RectInfo = Obj.GetComponent<RectTransform>();
+        RectInfo.sizeDelta = new Vector2(100 - (Bound * 10), 100 - (Bound * 10));
         float BtnWidth = RectInfo.rect.width;
         float BtnHeight = RectInfo.rect.height;
         // 取得位置
         Vector3 PosInfo = Obj.transform.position;
         int GridCount = 0;
-        for (int i = 0; i < 5; ++i)
-            for (int j = 0; j < 5; ++j)
+        for (int i = 0; i < Bound; ++i)
+            for (int j = 0; j < Bound; ++j)
             {
                 GameObject NewObj = null;
                 if (i == 0 && j == 0)
@@ -174,18 +175,18 @@ public class BingoController : MonoBehaviour
     // 產生玩家使用的Bingo盤
     void InitPlayGrid()
     {
-        m_PlayerGrid = new GameObject[5, 5];
+        m_PlayerGrid = new GameObject[Bound, Bound];
         GameObject Obj = GameObject.Find("PlayerBtn"); // 參考的按鈕
-
         // 取得按鈕的長寬 
         RectTransform RectInfo = Obj.GetComponent<RectTransform>();
+        RectInfo.sizeDelta = new Vector2(100 - (Bound * 10), 100 - (Bound * 10));
         float BtnWidth = RectInfo.rect.width;
         float BtnHeight = RectInfo.rect.height;
         // 取得位置
         Vector3 PosInfo = Obj.transform.position;
         int GridCount = 0;
-        for (int i = 0; i < 5; ++i)
-            for (int j = 0; j < 5; ++j)
+        for (int i = 0; i < Bound; ++i)
+            for (int j = 0; j < Bound; ++j)
             {
                 GameObject NewObj = null;
                 if (i == 0 && j == 0)
@@ -242,8 +243,8 @@ public class BingoController : MonoBehaviour
         GameObject BtnObj;
         Button theButton;
 
-        for (int c = 0; c < 5; c++)
-            for (int r = 0; r < 5; r++)
+        for (int c = 0; c < Bound; c++)
+            for (int r = 0; r < Bound; r++)
             {
                 if (m_PlayerBoard.m_Board[c, r] == Number)
                 {
@@ -270,8 +271,8 @@ public class BingoController : MonoBehaviour
         GameObject BtnObj;
         Button theButton;
 
-        for (int c = 0; c < 5; c++)
-            for (int r = 0; r < 5; r++)
+        for (int c = 0; c < Bound; c++)
+            for (int r = 0; r < Bound; r++)
             {
 
                 BtnObj = m_PlayerGrid[c, r];

@@ -148,7 +148,7 @@ namespace AiBingoBoard
         public int GetNextNumber(int[,] m_Board)// Ai lebel 2
         {
 
-            int[,] point = new int[5, 5];
+            int[,] point = new int[bound, bound];
             int NextNumber = -1;
             int col = 5;
             int row = 5;
@@ -182,9 +182,9 @@ namespace AiBingoBoard
             //找出最有價值的選擇
             int MaxPrice = -1;
             int MaxPriceNumber = -1;
-            for (int c = 0; c < 5; c++)
+            for (int c = 0; c < bound; c++)
             {
-                for (int r = 0; r < 5; r++)
+                for (int r = 0; r < bound; r++)
                 {
                     if (point[c, r] > MaxPrice)
                     {
