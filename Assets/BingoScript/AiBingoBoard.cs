@@ -8,9 +8,11 @@ namespace AiBingoBoard
 
     public class AiStrategy : BingoBoard
     {
+
         public AiStrategy(int b) : base(b)
         {
         }
+
 
         public int GetNextNumber(AiLevelinterface AiContext)
         {
@@ -26,39 +28,45 @@ namespace AiBingoBoard
 
     }
 
-    public class AiLevel1 : AiLevelinterface
+    public class AiLevel1 : AiLevelinterface //老師的AI
     {
-        protected int[] m_LinePoint = new int[12];
-
-
-        public int GetNextNumber(int[,] m_Board) //老師的AI
+        int bound = 5;//正方形邊長
+        public AiLevel1(int b)
         {
+            bound = b;
+        }
+
+
+
+        public int GetNextNumber(int[,] m_Board)
+        {
+            int[] m_LinePoint = new int[(bound * 2) + 2];
 
             int lineindex = 0;
             int point = 0;
 
             //計算列值
-            for (int i = 0; i < 5; i++)
+            for (int i = 0; i < bound; i++)
             {
                 point = 0;
-                for (int j = 0; j < 5; j++)
+                for (int j = 0; j < bound; j++)
                     if (m_Board[i, j] > 0)
                         point++;
                 m_LinePoint[lineindex++] = point;
             }
 
             //計算行值
-            for (int j = 0; j < 5; j++)
+            for (int j = 0; j < bound; j++)
             {
                 point = 0;
-                for (int i = 0; i < 5; i++)
+                for (int i = 0; i < bound; i++)
                     if (m_Board[i, j] > 0)
                         point++;
                 m_LinePoint[lineindex++] = point;
             }
 
             // TODO:左斜,右斜
-            for (int i = 0; i < 5; i++)
+            for (int i = 0; i < bound; i++)
             {
                 point = 0;
                 if (m_Board[i, i] > 0)
@@ -67,18 +75,18 @@ namespace AiBingoBoard
             m_LinePoint[lineindex++] = point;
 
 
-            for (int i = 4; i >= 0; i--)
+            for (int i = (bound - 1); i >= 0; i--)
             {
                 point = 0;
-                if (m_Board[i, 4 - i] > 0)
+                if (m_Board[i, (bound - 1) - i] > 0)
                     point++;
             }
             m_LinePoint[lineindex++] = point;
 
             // 取得最少分數者
-            int MinNum = 6;
+            int MinNum = 20;
             int MinIndex = -1;
-            for (lineindex = 0; lineindex < 12; ++lineindex)
+            for (lineindex = 0; lineindex < ((bound * 2) + 2); ++lineindex)
                 if (m_LinePoint[lineindex] != 0 && m_LinePoint[lineindex] < MinNum)
                 {
                     MinNum = m_LinePoint[lineindex];
@@ -87,10 +95,10 @@ namespace AiBingoBoard
 
             // 決定出牌,列方向
             int NextNumber = 0;
-            if (MinIndex < 5)
+            if (MinIndex < bound)
             {
                 // 第一個號碼
-                for (int j = 0; j < 5; j++)
+                for (int j = 0; j < bound; j++)
                     if (m_Board[MinIndex, j] != 0)
                     {
                         NextNumber = m_Board[MinIndex, j];
@@ -98,20 +106,20 @@ namespace AiBingoBoard
                     }
             }
             // 決定出牌,行方向
-            else if (MinIndex < 10)
+            else if (MinIndex < (bound * 2))
             {
                 // 第一個號碼
-                for (int i = 0; i < 5; i++)
-                    if (m_Board[i, MinIndex - 5] != 0)
+                for (int i = 0; i < bound; i++)
+                    if (m_Board[i, MinIndex - bound] != 0)
                     {
-                        NextNumber = m_Board[i, MinIndex - 5];
+                        NextNumber = m_Board[i, MinIndex - bound];
                         break;
                     }
             }
             // TODO,左斜(左上->右下)
-            else if (MinIndex == 10)
+            else if (MinIndex == (bound * 2))
             {
-                for (int i = 0; i < 5; i++)
+                for (int i = 0; i < bound; i++)
                 {
                     if (m_Board[i, i] != 0)
                     {
@@ -124,10 +132,10 @@ namespace AiBingoBoard
             // TODO,右斜(右上->左下)
             else
             {
-                for (int i = 4; i >= 0; i--)
-                    if (m_Board[i, 4 - i] != 0)
+                for (int i = (bound - 1); i >= 0; i--)
+                    if (m_Board[i, bound - 1 - i] != 0)
                     {
-                        NextNumber = m_Board[i, 4 - i];
+                        NextNumber = m_Board[i, (bound - 1) - i];
                         //Debug.Log("電腦選擇右斜");
                         break;
                     }
@@ -138,22 +146,175 @@ namespace AiBingoBoard
         }
         // 決定出牌
     }
-    public class AiLevel2 : AiLevelinterface
+    public class AiLevel2 : AiLevelinterface //Ai2
     {
-        int bound = 5; //正方形邊長
+       static int bound = 5;
+        
+        //int bound = 5;//正方形邊長
         public AiLevel2(int b)
         {
             bound = b;
+             
         }
-        public int GetNextNumber(int[,] m_Board)// Ai lebel 2
+        int[,] pointValue = new int[bound, bound];
+
+        public int GetNextNumber(int[,] m_Board) //Ai level 3
+        {
+
+            Reset();
+            CalcValue(m_Board);
+
+            int NextNumber = UseHighestValue(m_Board);
+            //Debug.Log ("Ai1出牌[" + HighReturnOnInvestmentAddress + "]");
+            return NextNumber;
+        }
+        void Reset()
+        {
+            for (int c = 0; c < bound; c++)
+            {
+                for (int r = 0; r < bound; r++)
+                {
+                    pointValue[c, r] = 0;
+                }
+            }
+        }
+
+        void CalcValue(int[,] m_Board)
+        {
+            CalcAllValue(m_Board);
+            CalcSpecialValue();
+        }
+        void CalcAllValue(int[,] m_Board)
+        {
+            for (int c = 0; c < bound; c++)
+            {
+                for (int r = 0; r < bound; r++)
+                {
+                    if (m_Board[c, r] == 0)
+                    {
+                        AddCol(c);
+                        AddRow(r);
+                        AddSlash(c, r);
+                        AddBackSlash(c, r);
+                    }
+                }
+            }
+        }
+        void CalcSpecialValue()
+        {
+            CalcSlashValue();
+            CalcBackSlashValue();
+        }
+        void CalcSlashValue()
+        {
+            for (int c = 0; c < bound; c++)
+            {
+                for (int r = 0; r < bound; r++)
+                {
+                    if (c == r)
+                    {
+                        pointValue[c, r] += 4;
+                    }
+                }
+            }
+        }
+        void CalcBackSlashValue()
+        {
+            for (int c = 0; c < bound; c++)
+            {
+                for (int r = 0; r < bound; r++)
+                {
+                    if ((bound - c - 1) == r)
+                    {
+                        pointValue[c, r] += 4;
+                    }
+                }
+            }
+        }
+        void AddCol(int col)
+        {
+            for (int r = 0; r < bound; r++)
+            {
+                pointValue[col, r]++;
+            }
+        }
+        void AddRow(int row)
+        {
+            for (int c = 0; c < bound; c++)
+            {
+                pointValue[c, row]++;
+            }
+        }
+        void AddSlash(int col, int row)
+        {
+            if (col == row)
+            {
+                for (int c = 0; c < bound; c++)
+                {
+                    for (int r = 0; r < bound; r++)
+                    {
+                        if (c == r)
+                        {
+                            pointValue[c, r] += 2;
+                        }
+                    }
+                }
+            }
+        }
+        void AddBackSlash(int col, int row)
+        {
+            if ((bound - col - 1) == row)
+            {
+                for (int c = 0; c < bound; c++)
+                {
+                    for (int r = 0; r < bound; r++)
+                    {
+                        if ((bound - c - 1) == r)
+                        {
+                            pointValue[c, r] += 2;
+                        }
+                    }
+                }
+            }
+        }
+
+        int UseHighestValue(int[,] m_Board)
+        {
+            int value = 0;
+            int HightestValueNumber = 0;
+            for (int c = 0; c < bound; c++)
+            {
+                for (int r = 0; r < bound; r++)
+                {
+                    if (m_Board[c, r] == 0)
+                        continue;
+                    if (pointValue[c, r] > value)
+                    {
+                        value = pointValue[c, r];
+                        HightestValueNumber = m_Board[c, r];
+                    }
+                }
+            }
+            return HightestValueNumber;
+        }
+
+    }
+    public class AiLevel3 : AiLevelinterface
+    {
+        int bound = 5; //正方形邊長
+        public AiLevel3(int b)
+        {
+            bound = b;
+        }
+        public int GetNextNumber(int[,] m_Board)// Ai level3
         {
 
             int[,] point = new int[bound, bound];
             int NextNumber = -1;
             int col = 5;
             int row = 5;
-            
-                           //計算每個位置價值(point)
+
+            //計算每個位置價值(point)
             for (int c = 0; c < bound; c++)
             {
                 for (int r = 0; r < bound; r++)
@@ -198,16 +359,22 @@ namespace AiBingoBoard
             return NextNumber;
         }
     }
-    public class AiLevel3 : AiLevelinterface
+    public class AiLevel4 : AiLevelinterface //
     {
-        public int GetNextNumber(int[,] m_Board) //Ai level 3
+        int bound = 5;//邊長
+        public AiLevel4(int b)
         {
-            int[,] point = new int[5, 5];
+            bound = b;
+
+        }
+
+        public int GetNextNumber(int[,] m_Board) //Ai level 4
+        {
+            int[,] point = new int[bound, bound];
             int NextNumber = -1;
-            int[,] colPrice = new int[5, 5];
-            int[,] rowPrice = new int[5, 5];
-            int bound = 5; //正方形邊長
-                           //計算每個位置價值(point)
+            int[,] colPrice = new int[bound, bound];
+            int[,] rowPrice = new int[bound, bound];
+            //計算每個位置價值(point)
             for (int c = 0; c < bound; c++)
             {
                 for (int r = 0; r < bound; r++)
@@ -238,9 +405,9 @@ namespace AiBingoBoard
             int MaxPrice = -1;
             int MaxPriceNumber = -1;
             int MaxPry = -1;//優先值 => (rowPrice - colPrice )^2
-            for (int c = 0; c < 5; c++)
+            for (int c = 0; c < bound; c++)
             {
-                for (int r = 0; r < 5; r++)
+                for (int r = 0; r < bound; r++)
                 {
                     if (point[c, r] == MaxPrice)//if 兩點價值相等 比較優先度
                     {
@@ -267,4 +434,5 @@ namespace AiBingoBoard
         }
     }
 }
+
 
