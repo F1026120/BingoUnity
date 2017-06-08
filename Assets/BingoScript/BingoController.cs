@@ -145,12 +145,11 @@ public class BingoController : MonoBehaviour
 
         // 取得按鈕的長寬 
         RectTransform RectInfo = Obj.GetComponent<RectTransform>();
-        RectInfo.sizeDelta = new Vector2(100 - (Bound * 10), 100 - (Bound * 10));
+        RectInfo.sizeDelta = new Vector2(250 / Bound, 250 / Bound);
         float BtnWidth = RectInfo.rect.width;
         float BtnHeight = RectInfo.rect.height;
         // 取得位置
         Vector3 PosInfo = Obj.transform.position;
-        int GridCount = 0;
         for (int i = 0; i < Bound; ++i)
             for (int j = 0; j < Bound; ++j)
             {
@@ -179,12 +178,11 @@ public class BingoController : MonoBehaviour
         GameObject Obj = GameObject.Find("PlayerBtn"); // 參考的按鈕
         // 取得按鈕的長寬 
         RectTransform RectInfo = Obj.GetComponent<RectTransform>();
-        RectInfo.sizeDelta = new Vector2(100 - (Bound * 10), 100 - (Bound * 10));
+        RectInfo.sizeDelta = new Vector2(250/Bound, 250/Bound);
         float BtnWidth = RectInfo.rect.width;
         float BtnHeight = RectInfo.rect.height;
         // 取得位置
         Vector3 PosInfo = Obj.transform.position;
-        int GridCount = 0;
         for (int i = 0; i < Bound; ++i)
             for (int j = 0; j < Bound; ++j)
             {
@@ -242,17 +240,23 @@ public class BingoController : MonoBehaviour
         ColorBlock thecolors;
         GameObject BtnObj;
         Button theButton;
-
+        Image theImage;
         for (int c = 0; c < Bound; c++)
             for (int r = 0; r < Bound; r++)
             {
                 if (m_PlayerBoard.m_Board[c, r] == Number)
                 {
+
                     BtnObj = m_PlayerGrid[c, r];
                     theButton = BtnObj.GetComponent<Button>();
+                    /*
+                    theImage = BtnObj.GetComponent<Image>();
+                    theImage.overrideSprite = Resources.Load("Buttonslect") as Sprite;
+                    */
                     thecolors = BtnObj.GetComponent<Button>().colors;
                     thecolors.normalColor = Color.red;
                     theButton.colors = thecolors;
+                    
                 }
                 if (m_ComBoard.m_Board[c, r] == Number)
                 {
