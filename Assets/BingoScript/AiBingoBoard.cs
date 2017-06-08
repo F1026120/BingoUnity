@@ -26,11 +26,12 @@ namespace AiBingoBoard
 
         int GetNextNumber(int[,] m_Board);
 
+
     }
 
     public class AiLevel1 : AiLevelinterface //老師的AI
     {
-        int bound = 5;//正方形邊長
+        int bound = 10;//正方形邊長
         public AiLevel1(int b)
         {
             bound = b;
@@ -148,17 +149,17 @@ namespace AiBingoBoard
     }
     public class AiLevel2 : AiLevelinterface //Ai2
     {
-       static int bound = 5;
-        
+        static int bound = 5;
+        int[,] pointValue;
         //int bound = 5;//正方形邊長
         public AiLevel2(int b)
         {
             bound = b;
-             
+            pointValue = new int[bound, bound];
         }
-        int[,] pointValue = new int[bound, bound];
 
-        public int GetNextNumber(int[,] m_Board) //Ai level 3
+
+        public int GetNextNumber(int[,] m_Board) //Ai level 2
         {
 
             Reset();
@@ -301,7 +302,7 @@ namespace AiBingoBoard
     }
     public class AiLevel3 : AiLevelinterface
     {
-        int bound = 5; //正方形邊長
+        int bound = 10; //正方形邊長
         public AiLevel3(int b)
         {
             bound = b;
@@ -311,9 +312,6 @@ namespace AiBingoBoard
 
             int[,] point = new int[bound, bound];
             int NextNumber = -1;
-            int col = 5;
-            int row = 5;
-
             //計算每個位置價值(point)
             for (int c = 0; c < bound; c++)
             {
