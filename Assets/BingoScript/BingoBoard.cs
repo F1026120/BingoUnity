@@ -8,9 +8,18 @@ public class BingoBoard
     public int[,] m_Board = new int[Bound, Bound];
     int[] m_LineValue = new int[(Bound*2)+2];
 
-    public BingoBoard(int b)
+    //單例模式
+    private static BingoBoard instance = null;
+
+    public static BingoBoard getInstance()
     {
-        Bound = b;
+        if (instance == null)
+            instance = new BingoBoard();
+        return instance;
+    }
+
+    protected BingoBoard()
+    {
     }
 
     // 初始賓果盤
@@ -92,7 +101,5 @@ public class BingoBoard
                     return;
                 }
     }
-
-
 
 }

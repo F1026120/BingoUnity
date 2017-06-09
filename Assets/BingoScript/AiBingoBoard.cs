@@ -8,12 +8,6 @@ namespace AiBingoBoard
 
     public class AiStrategy : BingoBoard
     {
-
-        public AiStrategy(int b) : base(b)
-        {
-        }
-
-
         public int GetNextNumber(AiLevelinterface AiContext)
         {
             return AiContext.GetNextNumber(m_Board);
@@ -31,7 +25,7 @@ namespace AiBingoBoard
 
     public class AiLevel1 : AiLevelinterface //老師的AI
     {
-        int bound = 10;//正方形邊長
+        int bound = 5;//正方形邊長
         public AiLevel1(int b)
         {
             bound = b;
@@ -300,67 +294,10 @@ namespace AiBingoBoard
         }
 
     }
-    public class AiLevel3 : AiLevelinterface
-    {
-        int bound = 10; //正方形邊長
-        public AiLevel3(int b)
-        {
-            bound = b;
-        }
-        public int GetNextNumber(int[,] m_Board)// Ai level3
-        {
-
-            int[,] point = new int[bound, bound];
-            int NextNumber = -1;
-            //計算每個位置價值(point)
-            for (int c = 0; c < bound; c++)
-            {
-                for (int r = 0; r < bound; r++)
-                {
-                    point[c, r] = 0;
-                    if (m_Board[c, r] == 0)//如果以選過則不用判斷
-                        continue;
-                    for (int k = 0; k < bound; k++)
-                    {
-                        if (m_Board[c, k] == 0) point[c, r] += 1;//判斷row方向之已選過的點 
-                        if (m_Board[k, r] == 0) point[c, r] += 1;//判斷col方向之已選過的點
-                        if (c == r || (c + r) == (bound - 1))//如果為斜線上的點
-                        {
-                            if (c == r)//左上向右下的斜線
-                                if (m_Board[k, k] == 0) point[c, r] += 2;
-                            if ((c + r) == (bound - 1))//左下向 右上的斜線
-                                if (m_Board[k, (bound - 1) - k] == 0) point[c, r] += 2;
-
-                        }
-                    }
-                    if (c == r || (c + r) == (bound - 1)) point[c, r] += 8;//斜線上的點加權8
-                    if (c == r && (c + r) == (bound - 1)) point[c, r] += 4;//中心交點 額外加權 4
-
-                }
-            }
-            //找出最有價值的選擇
-            int MaxPrice = -1;
-            int MaxPriceNumber = -1;
-            for (int c = 0; c < bound; c++)
-            {
-                for (int r = 0; r < bound; r++)
-                {
-                    if (point[c, r] > MaxPrice)
-                    {
-                        MaxPrice = point[c, r];
-                        MaxPriceNumber = m_Board[c, r];
-                    }
-                }
-            }
-            NextNumber = MaxPriceNumber;
-            //Debug.Log("電腦出牌[" + NextNumber + "]" + "價值 " + MaxPrice);
-            return NextNumber;
-        }
-    }
-    public class AiLevel4 : AiLevelinterface //
+    public class AiLevel3 : AiLevelinterface //
     {
         int bound = 5;//邊長
-        public AiLevel4(int b)
+        public AiLevel3(int b)
         {
             bound = b;
 
