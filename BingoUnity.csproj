@@ -81,6 +81,7 @@
     <Compile Include="Assets\BingoScript\AiBingoBoard.cs" />
     <Compile Include="Assets\BingoScript\BingoBoard.cs" />
     <Compile Include="Assets\BingoScript\BingoController.cs" />
+    <Compile Include="Assets\BingoScript\Board.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Target Name="GenerateTargetFrameworkMonikerAttribute" />

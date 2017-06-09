@@ -9,18 +9,17 @@ public class BingoBoard
     int[] m_LineValue = new int[(Bound*2)+2];
 
     //單例模式
-    private static BingoBoard instance = null;
+    private static BingoBoard instance = new BingoBoard();
 
     public static BingoBoard getInstance()
     {
-        if (instance == null)
-            instance = new BingoBoard();
         return instance;
     }
 
     protected BingoBoard()
     {
-    }
+	}
+
 
     // 初始賓果盤
     public void InitBoard()
@@ -102,4 +101,9 @@ public class BingoBoard
                 }
     }
 
+	//NON-CHECKED
+	public int GetNextNumber(AiLevelinterface AiContext)
+	{
+		return AiContext.GetNextNumber(m_Board);
+	}
 }

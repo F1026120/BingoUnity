@@ -12,8 +12,9 @@ public class BingoController : MonoBehaviour
     static int ComLine = 0;
     static int usingAi = 1;
     // 資料結構
-    BingoBoard m_PlayerBoard = BingoBoard.getInstance();
-    AiBingoBoard.AiStrategy m_ComBoard = new AiBingoBoard.AiStrategy();
+	BingoBoard m_PlayerBoard = BoardFactory.CreateBoard(BoardFactory.board_type.manual);
+	BingoBoard m_ComBoard = BoardFactory.CreateBoard(BoardFactory.board_type.ai);
+
     // 換誰出手
     enum WhichOne
     {
@@ -55,16 +56,16 @@ public class BingoController : MonoBehaviour
             switch (usingAi)
             {
                 case 1:
-                    NextNumber = m_ComBoard.GetNextNumber(new AiBingoBoard.AiLevel1(Bound));
+                    NextNumber = m_ComBoard.GetNextNumber(new AiLevel1(Bound));
                     break;
                 case 2:
-                    NextNumber = m_ComBoard.GetNextNumber(new AiBingoBoard.AiLevel2(Bound));
+                    NextNumber = m_ComBoard.GetNextNumber(new AiLevel2(Bound));
                     break;
                 case 3:
-                    NextNumber = m_ComBoard.GetNextNumber(new AiBingoBoard.AiLevel3(Bound));
+                    NextNumber = m_ComBoard.GetNextNumber(new AiLevel3(Bound));
                     break;
                 default:
-                    NextNumber = m_ComBoard.GetNextNumber(new AiBingoBoard.AiLevel1(Bound));
+                    NextNumber = m_ComBoard.GetNextNumber(new AiLevel1(Bound));
                     break;
 
             }

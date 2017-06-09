@@ -3,24 +3,18 @@ using System.Collections.Generic;
 using UnityEngine;
 
 // 賓果Ai
-namespace AiBingoBoard
-{
-
+    //策略模式
     public class AiStrategy : BingoBoard
     {
         public int GetNextNumber(AiLevelinterface AiContext)
         {
             return AiContext.GetNextNumber(m_Board);
         }
-
     }
 
     public interface AiLevelinterface
     {
-
         int GetNextNumber(int[,] m_Board);
-
-
     }
 
     public class AiLevel1 : AiLevelinterface //老師的AI
@@ -30,8 +24,6 @@ namespace AiBingoBoard
         {
             bound = b;
         }
-
-
 
         public int GetNextNumber(int[,] m_Board)
         {
@@ -368,6 +360,3 @@ namespace AiBingoBoard
             return NextNumber;
         }
     }
-}
-
-
